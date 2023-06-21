@@ -1,0 +1,36 @@
+{
+  "name": "epub-builder",
+  "version": "0.0.1",
+  "bin": {
+    "epub-builder": "./lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "cheerio": "1.0.0-rc.12",
+    "dedent": "^0.7.0",
+    "image-size": "^1.0.2",
+    "jszip": "^3.10.1",
+    "markdown-it": "^13.0.1",
+    "mime-types": "^2.1.35",
+    "uuid": "^9.0.0",
+    "yaml": "^2.3.1",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@raidou/eslint-config-base": "^1.6.0",
+    "@types/dedent": "^0.7.0",
+    "@types/eslint": "^8.40.2",
+    "@types/markdown-it": "^12.2.3",
+    "@types/mime-types": "^2.1.1",
+    "@types/node": "^20.3.1",
+    "@types/prettier": "^2.7.3",
+    "@types/uuid": "^9.0.2",
+    "@types/yargs": "^17.0.24",
+    "eslint": "^8.43.0",
+    "prettier": "^2.8.8",
+    "typescript": "^5.1.3"
+  }
+}
