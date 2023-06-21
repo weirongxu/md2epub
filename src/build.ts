@@ -6,7 +6,7 @@ import mime from 'mime-types'
 import MarkdownIt from 'markdown-it'
 import dedent from 'dedent'
 import path from 'path'
-import * as cheerio from 'cheerio'
+import { JSDOM } from 'jsdom'
 import imageSize from 'image-size'
 
 type Config = {
@@ -42,6 +42,18 @@ type NavNode = {
 
 const md = new MarkdownIt()
 
+function htmlToXHtml(html: string) {
+  const jsdom = new JSDOM()
+  const win = jsdom.window
+  const doc = new win.DOMParser().parseFromString(html, 'text/html')
+  const result = new win.XMLSerializer().serializeToString(doc.body)
+  return result
+}
+
+function mdRender(mark: string) {
+  return htmlToXHtml(md.render(mark))
+}
+
 class ContentBuilder {
   #idNum = 1
   #manifestItems = new Map<
@@ -67,11 +79,14 @@ class ContentBuilder {
     title,
     head,
     body,
+    wrapBody = true,
   }: {
     title: string
     head: string
     body: string
+    wrapBody?: boolean
   }) {
+    const bodyContent = wrapBody ? `<body>${body}</body>` : body
     return dedent`
       <?xml version='1.0' encoding='utf-8'?>
       <html xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="${this.config.lang}">
@@ -80,11 +95,17 @@ class ContentBuilder {
           ${head}
           <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         </head>
-        <body>
-          ${body}
-        </body>
+        ${bodyContent}
       </html>
     `
+  }
+
+  defaultCoverTitle() {
+    return this.config.cover_title ?? 'Cover'
+  }
+
+  defaultNavTitle() {
+    return this.config.nav_title ?? 'Navigation'
   }
 
   addStyle() {
@@ -135,22 +156,32 @@ class ContentBuilder {
 
       let id: string | undefined
       let htmlTitle: string | undefined
+      let href = node.path
       const navNodes: NavNode[] = []
 
       if (node.path) {
         const r = this.genNormalPage(node.path)
         id = r.id
         htmlTitle = r.title
-      } else if (node.cover_page) id = this.genCoverPage(node.cover_page)
-      else if (node.nav_page) id = 'nav'
+        href = r.href
+      } else if (node.cover_page) {
+        const r = this.genCoverPage(node.cover_page)
+        id = r.id
+        htmlTitle = r.title
+        href = r.href
+      } else if (node.nav_page) {
+        id = 'nav'
+        htmlTitle = this.defaultNavTitle()
+        href = 'nav.xhtml'
+      }
       if (id) this.#spineItems.push(id)
-      if (node.nav) {
+      if (node.nav ?? true) {
         const title =
           node.title ??
           htmlTitle ??
           (node.path ? path.basename(node.path, path.extname(node.path)) : null)
         if (title) {
-          const href = node.anchor ? `${node.path}#${node.anchor}` : node.path
+          href = node.anchor ? `${href}#${node.anchor}` : href
           navList.push({
             title,
             href,
@@ -167,10 +198,12 @@ class ContentBuilder {
   genNormalPage(path: string) {
     const queryTitle = (html: string) => {
       let title: string | undefined
-      const $ = cheerio.load(html)
+      const jsdom = new JSDOM(html)
+      const win = jsdom.window
+      const doc = win.document
       const selectors = ['title', 'h1', 'h2', 'h3', 'h4', 'h5']
       for (const selector of selectors) {
-        const text = $(selector).text()
+        const text = doc.querySelector(selector)?.textContent
         if (text) {
           title = text
           break
@@ -184,12 +217,13 @@ class ContentBuilder {
     let title: string | undefined
     if (path.endsWith('.md')) {
       storePath = `${path}.xhtml`
-      const body = md.render(fs.readFileSync(path, 'utf8'))
+      const body = mdRender(fs.readFileSync(path, 'utf8'))
       title = queryTitle(body)
       content = this.renderXHtml({
         title,
         head: this.importStyle,
         body,
+        wrapBody: false,
       })
     } else if (path.endsWith('.html')) {
       content = fs.readFileSync(path, 'utf8')
@@ -198,13 +232,14 @@ class ContentBuilder {
       content = fs.readFileSync(path)
     }
 
-    return { title, id: this.addManifest(storePath, content) }
+    return { title, id: this.addManifest(storePath, content), href: storePath }
   }
 
   genCoverPage(path: string) {
     const dimensions = imageSize(path)
+    const title = this.defaultCoverTitle()
     const coverHtml = this.renderXHtml({
-      title: this.config.cover_title ?? 'Cover',
+      title,
       head: dedent`
         <style type="text/css" title="override_css">
           @page { padding: 0pt; margin:0pt }
@@ -219,10 +254,15 @@ class ContentBuilder {
         </div>
       `,
     })
-    return this.addManifest('cover_page.xhtml', coverHtml, {
-      id: 'cover-page',
-      properties: 'svg',
-    })
+    const href = 'cover_page.xhtml'
+    return {
+      title,
+      id: this.addManifest(href, coverHtml, {
+        id: 'cover-page',
+        properties: 'svg',
+      }),
+      href,
+    }
   }
 
   addManifest(
@@ -255,14 +295,16 @@ class ContentBuilder {
       const contentType = mime.contentType(path)
       if (contentType)
         items.push(
-          `<item href="${path}" id="${value.id}" media-type="${contentType}">`
+          `<item href="${path}" id="${value.id}" media-type="${contentType}" ${
+            value.properties ? `properties="${value.properties}" ` : ''
+          }/>`
         )
     }
     return items
   }
 
   spineItems() {
-    return this.#spineItems.map((id) => `<itemref idref="${id}">`)
+    return this.#spineItems.map((id) => `<itemref idref="${id}" />`)
   }
 
   buildContainer(zip: JSZip) {
@@ -283,20 +325,22 @@ class ContentBuilder {
     function renderOl(nav: NavNode[]): string {
       return dedent`
         <ol>
-          ${nav.map(
-            (node) =>
-              `<li>${
-                node.href
-                  ? `<a href="${node.href}">${node.title}</a>`
-                  : node.title
-              }${node.nodes.length > 0 ? renderOl(node.nodes) : ''}</li>`
-          )}
+          ${nav
+            .map(
+              (node) =>
+                `<li>${
+                  node.href
+                    ? `<a href="${node.href}">${node.title}</a>`
+                    : node.title
+                }${node.nodes.length > 0 ? renderOl(node.nodes) : ''}</li>`
+            )
+            .join('\n')}
         </ol>
       `
     }
 
     const navHtml = this.renderXHtml({
-      title: this.config.nav_title ?? 'Navigation',
+      title: this.defaultNavTitle(),
       head: this.importStyle,
       body: dedent`
         <nav epub:type="toc">
@@ -393,5 +437,5 @@ export async function buildBy(
   if (!outputPath) {
     outputPath = `${config.title}.epub`
   }
-  fs.writeFileSync(file, outputPath)
+  fs.writeFileSync(outputPath, file)
 }
