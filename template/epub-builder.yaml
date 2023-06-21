@@ -1,0 +1,30 @@
+author: 'Joan Doe'
+title: 'Book Name'
+# no_title: 'No Title'
+# cover_title: 'Cover'
+# nav_title: 'Navigation'
+lang: 'en'
+# cover: 'cover.jpeg'
+# publisher: 'Book Publisher'
+spine:
+  # - cover_page: 'cover.jpeg'
+  # - nav_page: true
+  - title: 'preface'
+    path: 'preface.md'
+  - title: 'chapter 1'
+    nodes:
+      - 'chapter_1_1.md'
+      - 'chapter_1_2.md'
+      - title: 'Chapter 1-3'
+        path: 'chapter_1_3.md'
+        nodes:
+          - 'chapter_1_3_1.md'
+  - path: 'chapter_2.md'
+    nodes:
+      - name: 'chapter_2.md'
+      - anchor: 'title'
+  - 'chapter_3.md'
+  - path: 'chapter_3_SP.md'
+    nav: false
+  - 'chapter_4.md'
+  - 'epilogue.md'

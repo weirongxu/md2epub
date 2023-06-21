@@ -1,11 +1,11 @@
-author: 'Joan Doe'
-title: 'Book Name'
-# no_title: 'No Title'
-# cover_title: 'Cover'
-# nav_title: 'Navigation'
-lang: 'en'
+author: '作者'
+title: '书名'
+no_title: '无题'
+cover_title: '封面'
+nav_title: '目录'
+lang: 'zh'
 # cover: 'cover.jpeg'
-# publisher: 'Book Store'
+# publisher: '出版商'
 spine:
   # - cover_page: 'cover.jpeg'
   # - nav_page: true

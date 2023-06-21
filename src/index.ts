@@ -45,9 +45,9 @@ async function main() {
     .command(
       'init',
       'Create a config file',
-      (y) => y,
-      async () => {
-        await initBy()
+      (y) => y.option('lang', { alias: 'l', choices: ['en', 'zh'] }),
+      async (argv) => {
+        await initBy(argv.lang)
       }
     )
     .parse()
