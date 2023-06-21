@@ -108,6 +108,10 @@ class ContentBuilder {
     return this.config.nav_title ?? 'Navigation'
   }
 
+  defaultNoTitle() {
+    return this.config.no_title ?? '[No Title]'
+  }
+
   addStyle() {
     this.importStyle = dedent`
       <link href="page-styles.css" rel="stylesheet" type="text/css"/>
@@ -209,7 +213,7 @@ class ContentBuilder {
           break
         }
       }
-      return title ?? this.config.no_title ?? 'No Title'
+      return title ?? this.defaultNoTitle()
     }
 
     let storePath = path
