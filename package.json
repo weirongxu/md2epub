@@ -1,5 +1,5 @@
 {
-  "name": "epub-builder",
+  "name": "@raidou/epub-builder",
   "version": "0.0.1",
   "bin": {
     "epub-builder": "./lib/index.js"
