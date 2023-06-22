@@ -6,7 +6,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "outDir": "lib",
-    "verbatimModuleSyntax": false,
+    "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
   "include": ["src"]
