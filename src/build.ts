@@ -7,7 +7,7 @@ import MarkdownIt from 'markdown-it'
 import dedent from 'dedent'
 import path from 'path'
 import { JSDOM } from 'jsdom'
-import imageSize from 'image-size'
+import { imageSize } from 'image-size'
 
 type Config = {
   author: string

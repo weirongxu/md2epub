@@ -4,6 +4,7 @@
   "bin": {
     "epub-builder": "./lib/index.js"
   },
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "lint": "eslint src"

@@ -3,8 +3,8 @@
 import fs from 'fs'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import { buildBy } from './build'
-import { initBy } from './init'
+import { buildBy } from './build.js'
+import { initBy } from './init.js'
 
 async function main() {
   await yargs(hideBin(process.argv))
