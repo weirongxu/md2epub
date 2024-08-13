@@ -1,17 +1,22 @@
 # EPUB Builder
 
 ```shell
-npm i -g @raidou/epub-builder
+npm i -g @raidou/md2epub
 ```
 
 ## Usage
 
 ```shell
 # Create a configuration file
-epub-builder init
+md2epub init
 
 # Modify configuration file
+editor ./md2epub.yaml
 
 # Build
-epub-builder build
+md2epub build
 ```
+
+## LICENSE
+
+[MIT](./LICENSE)

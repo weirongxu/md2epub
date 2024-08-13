@@ -16,7 +16,7 @@ async function main() {
           .option('config', {
             alias: 'c',
             type: 'string',
-            desc: 'Config path, default is epub-builder.{yaml,json}',
+            desc: 'Config path, default is md2epub.{yaml,json}',
           })
           .option('output', {
             alias: 'o',
@@ -25,8 +25,8 @@ async function main() {
           }),
       async (argv) => {
         const config = argv.config
-        const defaultYamlConfig = 'epub-builder.yaml'
-        const defaultJsonConfig = 'epub-builder.json'
+        const defaultYamlConfig = 'md2epub.yaml'
+        const defaultJsonConfig = 'md2epub.json'
         if (config) {
           if (!fs.existsSync(config)) {
             console.error(`Config(${config}) file not found`)

@@ -1,8 +1,8 @@
 {
-  "name": "@raidou/epub-builder",
+  "name": "@raidou/md2epub",
   "version": "0.1.0",
   "bin": {
-    "epub-builder": "./lib/index.js"
+    "md2epub": "./lib/index.js"
   },
   "engines": {
     "node": "^18.0.0"
