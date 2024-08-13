@@ -1,4 +1,4 @@
-# EPUB Builder
+# Markdown to EPUB Builder
 
 ```shell
 npm i -g @raidou/md2epub
