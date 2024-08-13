@@ -432,7 +432,8 @@ class ContentBuilder {
   build() {
     this.addStyle()
     this.addCover()
-    if (this.config.media_folder) this.addMediaFolder(this.config.media_folder)
+    if (this.config.media_folder && fs.existsSync(this.config.media_folder))
+      this.addMediaFolder(this.config.media_folder)
     this.addSpine(this.config.spine, this.#nav)
     this.addNav()
 
