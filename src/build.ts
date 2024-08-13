@@ -16,9 +16,10 @@ type Config = {
   uuid?: string
   publisher?: string
   cover?: string
-  no_title?: string
+  default_title?: string
   cover_title?: string
   nav_title?: string
+  media_folder?: string
   spine: ConfigSpineNode[]
 }
 
@@ -109,7 +110,7 @@ class ContentBuilder {
   }
 
   defaultNoTitle() {
-    return this.config.no_title ?? '[No Title]'
+    return this.config.default_title ?? '[No Title]'
   }
 
   addStyle() {
@@ -138,6 +139,16 @@ class ContentBuilder {
         img {
           max-width: 100%;
         }
+        table {
+          border-collapse: collapse;
+        }
+        table, th, td {
+          border-width: 1px;
+          border-style: solid;
+        }
+        th, td {
+          padding: 2px;
+        }
       `,
       {
         id: 'stylesheet',
@@ -151,6 +162,21 @@ class ContentBuilder {
       id: 'cover',
       properties: 'cover',
     })
+  }
+
+  addMediaFolder(folder: string) {
+    const files = fs.readdirSync(folder)
+    for (const file of files) {
+      const absPath = path.join(folder, file)
+      const stat = fs.statSync(absPath)
+      if (stat.isDirectory()) {
+        this.addMediaFolder(absPath)
+      } else {
+        this.addManifest(absPath, fs.readFileSync(absPath), {
+          id: file,
+        })
+      }
+    }
   }
 
   addSpine(spineNodes: ConfigSpineNode[], navList: NavNode[]) {
@@ -295,11 +321,14 @@ class ContentBuilder {
 
   manifestItems() {
     const items: string[] = []
-    for (const [path, value] of this.#manifestItems) {
-      const contentType = mime.contentType(path)
+    for (const [filepath, value] of this.#manifestItems) {
+      const filename = path.basename(filepath)
+      const contentType = mime.contentType(filename)
       if (contentType)
         items.push(
-          `<item href="${path}" id="${value.id}" media-type="${contentType}" ${
+          `<item href="${filepath}" id="${
+            value.id
+          }" media-type="${contentType}" ${
             value.properties ? `properties="${value.properties}" ` : ''
           }/>`
         )
@@ -403,6 +432,7 @@ class ContentBuilder {
   build() {
     this.addStyle()
     this.addCover()
+    if (this.config.media_folder) this.addMediaFolder(this.config.media_folder)
     this.addSpine(this.config.spine, this.#nav)
     this.addNav()
 

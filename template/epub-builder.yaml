@@ -1,11 +1,12 @@
 author: 'Joan Doe'
 title: 'Book Name'
-# no_title: '[No Title]'
+# default_title: '[No Title]'
 # cover_title: 'Cover'
 # nav_title: 'Navigation'
 lang: 'en'
 # cover: 'cover.jpeg'
 # publisher: 'Book Publisher'
+media_folder: 'media'
 spine:
   # - cover_page: 'cover.jpeg'
   # - nav_page: true

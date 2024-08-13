@@ -1,11 +1,12 @@
 author: '作者'
 title: '书名'
-no_title: '[无题]'
+default_title: '[无题]'
 cover_title: '封面'
 nav_title: '目录'
 lang: 'zh'
 # cover: 'cover.jpeg'
 # publisher: '出版商'
+media_folder: 'media'
 spine:
   # - cover_page: 'cover.jpeg'
   # - nav_page: true
