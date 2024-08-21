@@ -8,6 +8,7 @@ import { initBy } from './init.js'
 
 async function main() {
   await yargs(hideBin(process.argv))
+    .scriptName('md2epub')
     .command(
       'build',
       'Build a epub book',
@@ -50,6 +51,7 @@ async function main() {
         await initBy(argv.lang)
       }
     )
+    .demandCommand()
     .parse()
 }
 
