@@ -20,6 +20,9 @@ dependencies:
   markdown-it:
     specifier: ^13.0.1
     version: 13.0.1
+  markdown-it-footnote:
+    specifier: ^4.0.0
+    version: 4.0.0
   mime-types:
     specifier: ^2.1.35
     version: 2.1.35
@@ -49,6 +52,9 @@ devDependencies:
   '@types/markdown-it':
     specifier: ^12.2.3
     version: 12.2.3
+  '@types/markdown-it-footnote':
+    specifier: ^3.0.4
+    version: 3.0.4
   '@types/mime-types':
     specifier: ^2.1.1
     version: 2.1.1
@@ -202,6 +208,12 @@ packages:
 
   /@types/linkify-it@3.0.2:
     resolution: {integrity: sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==}
+    dev: true
+
+  /@types/markdown-it-footnote@3.0.4:
+    resolution: {integrity: sha512-XJ6n+v+2u+2gmYLSHcxyoNT/YrgrKvHuDJQlykFjuxCQCr86P2/fx1V6/0lcKxv5cSIlCaJ6sUcNS3zDI7I+LA==}
+    dependencies:
+      '@types/markdown-it': 12.2.3
     dev: true
 
   /@types/markdown-it@12.2.3:
@@ -1086,6 +1098,10 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /markdown-it-footnote@4.0.0:
+    resolution: {integrity: sha512-WYJ7urf+khJYl3DqofQpYfEYkZKbmXmwxQV8c8mO/hGIhgZ1wOe7R4HLFNwqx7TjILbnC98fuyeSsin19JdFcQ==}
+    dev: false
 
   /markdown-it@13.0.1:
     resolution: {integrity: sha512-lTlxriVoy2criHP0JKRhO2VDG9c2ypWCsT237eDiLqi09rmbKoUetyGHq2uOIRoRS//kfoJckS0eUzzkDR+k2Q==}

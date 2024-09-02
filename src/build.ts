@@ -4,6 +4,7 @@ import JSZip from 'jszip'
 import { v4 as uuidv4 } from 'uuid'
 import mime from 'mime-types'
 import MarkdownIt from 'markdown-it'
+import MarkdownItFootnote from 'markdown-it-footnote'
 import dedent from 'dedent'
 import path from 'path'
 import { JSDOM } from 'jsdom'
@@ -20,6 +21,7 @@ type Config = {
   cover_title?: string
   nav_title?: string
   media_folder?: string
+  styles?: string[]
   spine: ConfigSpineNode[]
 }
 
@@ -41,7 +43,9 @@ type NavNode = {
   nodes: NavNode[]
 }
 
-const md = new MarkdownIt()
+const md = new MarkdownIt({
+  html: true,
+}).use(MarkdownItFootnote)
 
 function htmlToXHtml(html: string) {
   const jsdom = new JSDOM()
@@ -113,11 +117,7 @@ class ContentBuilder {
     return this.config.default_title ?? '[No Title]'
   }
 
-  addStyle() {
-    this.importStyle = dedent`
-      <link href="page-styles.css" rel="stylesheet" type="text/css"/>
-      <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
-    `
+  addStyles() {
     this.addManifest(
       'page-styles.css',
       dedent`
@@ -154,6 +154,20 @@ class ContentBuilder {
         id: 'stylesheet',
       }
     )
+    if (this.config.styles)
+      for (const style of this.config.styles) {
+        this.addManifest(style, fs.readFileSync(style))
+      }
+
+    this.importStyle = dedent`
+      <link href="page-styles.css" rel="stylesheet" type="text/css"/>
+      <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+      ${this.config.styles
+        ?.map(
+          (href) => `<link href="${href}" rel="stylesheet" type="text/css"/>`
+        )
+        .join('\n')}
+    `
   }
 
   addCover() {
@@ -430,7 +444,7 @@ class ContentBuilder {
   }
 
   build() {
-    this.addStyle()
+    this.addStyles()
     this.addCover()
     if (this.config.media_folder && fs.existsSync(this.config.media_folder))
       this.addMediaFolder(this.config.media_folder)

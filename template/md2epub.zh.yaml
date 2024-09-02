@@ -7,6 +7,8 @@ lang: 'zh'
 # cover: 'cover.jpeg'
 # publisher: '出版商'
 media_folder: 'media'
+# styles:
+#   - global.css
 spine:
   # - cover_page: 'cover.jpeg'
   # - nav_page: true

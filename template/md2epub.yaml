@@ -7,6 +7,8 @@ lang: 'en'
 # cover: 'cover.jpeg'
 # publisher: 'Book Publisher'
 media_folder: 'media'
+# styles:
+#   - global.css
 spine:
   # - cover_page: 'cover.jpeg'
   # - nav_page: true
