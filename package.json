@@ -6,7 +6,7 @@
   },
   "repository": "git@github.com:weirongxu/md2epub.git",
   "engines": {
-    "node": "^20.0.0"
+    "node": ">=20.0.0"
   },
   "type": "module",
   "scripts": {
