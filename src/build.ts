@@ -22,7 +22,7 @@ type Config = {
   nav_title?: string
   media_folder?: string
   styles?: string[]
-  spine: ConfigSpineNode[]
+  spine?: ConfigSpineNode[]
 }
 
 type ConfigSpineNodeObj = {
@@ -128,7 +128,7 @@ class ContentBuilder {
       `,
       {
         id: 'page-styles',
-      }
+      },
     )
     this.addManifest(
       'stylesheet.css',
@@ -152,7 +152,7 @@ class ContentBuilder {
       `,
       {
         id: 'stylesheet',
-      }
+      },
     )
     if (this.config.styles)
       for (const style of this.config.styles) {
@@ -164,7 +164,7 @@ class ContentBuilder {
       <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
       ${this.config.styles
         ?.map(
-          (href) => `<link href="${href}" rel="stylesheet" type="text/css"/>`
+          (href) => `<link href="${href}" rel="stylesheet" type="text/css"/>`,
         )
         .join('\n')}
     `
@@ -315,7 +315,7 @@ class ContentBuilder {
     options: {
       id?: string
       properties?: string
-    } = {}
+    } = {},
   ) {
     let id: string
     const manifestItem = this.#manifestItems.get(path)
@@ -344,7 +344,7 @@ class ContentBuilder {
             value.id
           }" media-type="${contentType}" ${
             value.properties ? `properties="${value.properties}" ` : ''
-          }/>`
+          }/>`,
         )
     }
     return items
@@ -364,7 +364,7 @@ class ContentBuilder {
             <rootfile full-path="content.opf" media-type="application/oebps-package+xml"/>
           </rootfiles>
         </container>
-      `
+      `,
     )
   }
 
@@ -379,7 +379,7 @@ class ContentBuilder {
                   node.href
                     ? `<a href="${node.href}">${node.title}</a>`
                     : node.title
-                }${node.nodes.length > 0 ? renderOl(node.nodes) : ''}</li>`
+                }${node.nodes.length > 0 ? renderOl(node.nodes) : ''}</li>`,
             )
             .join('\n')}
         </ol>
@@ -432,7 +432,7 @@ class ContentBuilder {
             ${this.spineItems().join('\n')}
           </spine>
         </package>
-      `
+      `,
     )
   }
 
@@ -448,7 +448,7 @@ class ContentBuilder {
     this.addCover()
     if (this.config.media_folder && fs.existsSync(this.config.media_folder))
       this.addMediaFolder(this.config.media_folder)
-    this.addSpine(this.config.spine, this.#nav)
+    this.addSpine(this.config.spine ?? [], this.#nav)
     this.addNav()
 
     const zip = new JSZip()
@@ -463,15 +463,15 @@ class ContentBuilder {
 
 export async function buildBy(
   configPath: string,
-  outputPath: string | undefined
+  outputPath: string | undefined,
 ) {
   // eslint-disable-next-line no-console
   console.log(`Use config(${configPath})`)
   let config: Config
   if (configPath.endsWith('.json')) {
-    config = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Config
   } else if (['.yaml', '.yml'].some((ext) => configPath.endsWith(ext))) {
-    config = yaml.parse(fs.readFileSync(configPath, 'utf8'))
+    config = yaml.parse(fs.readFileSync(configPath, 'utf8')) as Config
   } else {
     console.error('Config type not supported')
     return

@@ -41,7 +41,7 @@ async function main() {
         } else {
           console.error('Config file not resolved')
         }
-      }
+      },
     )
     .command(
       'init',
@@ -49,7 +49,7 @@ async function main() {
       (y) => y.option('lang', { alias: 'l', choices: ['en', 'zh'] }),
       async (argv) => {
         await initBy(argv.lang)
-      }
+      },
     )
     .demandCommand()
     .parse()

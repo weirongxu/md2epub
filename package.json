@@ -10,9 +10,10 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint src",
-    "test": "pnpm run lint"
+    "build": "tsc -p tsconfig.build.json",
+    "test:types": "tsc --noEmit",
+    "test:lint": "eslint src",
+    "test": "pnpm run test:types && pnpm run test:lint"
   },
   "files": [
     "lib",
@@ -31,9 +32,8 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@raidou/eslint-config-base": "^1.6.0",
+    "@raidou/eslint-config-base": "^3.2.1",
     "@types/dedent": "^0.7.0",
-    "@types/eslint": "^8.40.2",
     "@types/jsdom": "^21.1.1",
     "@types/markdown-it": "^12.2.3",
     "@types/markdown-it-footnote": "^3.0.4",
@@ -42,8 +42,8 @@
     "@types/prettier": "^2.7.3",
     "@types/uuid": "^9.0.2",
     "@types/yargs": "^17.0.24",
-    "eslint": "^8.43.0",
-    "prettier": "^2.8.8",
+    "eslint": "^9.39.2",
+    "prettier": "^3.8.1",
     "typescript": "^5.1.3"
   }
 }
